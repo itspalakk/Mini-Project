@@ -30,6 +30,7 @@ export const api = {
 
   // Clubs
   getClubs:        ()       => request('GET',  '/clubs'),
+  getClub:         (id)     => request('GET',  `/clubs/${id}`),
   createClub:      (body)   => request('POST', '/clubs', body),
   registerClub:    (clubId) => request('POST', '/clubs/register', { clubId }),
 
@@ -48,4 +49,9 @@ export const api = {
   getMyRequests:   ()              => request('GET',   '/registrations/my'),
   getClubRequests: ()              => request('GET',   '/registrations/club-requests'),
   updateStatus:    (id, status)    => request('PATCH', `/registrations/${id}/status`, { status }),
+
+
+  // Update Profile - Change this
+  updateProfile: (data) => request('PUT', '/auth/profile', data),
 };
+

@@ -25,7 +25,7 @@ router.get('/', protect, async (req, res) => {
 // GET single club
 router.get('/:id', protect, async (req, res) => {
   try {
-    const club = await Club.findById(req.params.id).populate('coordinator', 'name email');
+    const club = await Club.findById(req.params.id);
     if (!club) return res.status(404).json({ message: 'Club not found' });
     // access check for non-students
     if (req.user.role !== 'student') {
@@ -33,7 +33,17 @@ router.get('/:id', protect, async (req, res) => {
       if (!assigned.includes(String(club._id)))
         return res.status(403).json({ message: 'Access denied to this club' });
     }
-    res.json(club);
+
+    // Fetch all admins & coordinators assigned to this club (with login credentials)
+    const User = require('../models/User');
+    const staff = await User.find({ 
+      assignedClubs: club._id, 
+      role: { $in: ['coordinator', 'admin'] } 
+    }).select('name email role loginId');
+
+    const responseData = { ...club.toObject(), staff };
+
+    res.json(responseData);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching club' });
   }

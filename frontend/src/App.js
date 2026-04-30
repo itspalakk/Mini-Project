@@ -11,7 +11,9 @@ import Login           from './pages/Login';
 import StudentDashboard from './pages/StudentDashboard';
 import StaffDashboard  from './pages/StaffDashboard';
 import Clubs           from './pages/Clubs';
+import ClubDetails     from './pages/ClubDetails';
 import Events          from './pages/Events';
+import Profile         from './pages/Profile';
 
 // Auto-redirect logged-in users to their dashboard
 function HomeRedirect() {
@@ -46,10 +48,18 @@ export default function App() {
 
             {/* Shared — any logged-in user */}
             <Route path="/clubs"  element={<ProtectedRoute><Clubs /></ProtectedRoute>} />
+            <Route path="/clubs/:id" element={<ProtectedRoute><ClubDetails /></ProtectedRoute>} />
             <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
+
+            <Route path="/profile" element={
+            <ProtectedRoute>
+            <Profile />
+            </ProtectedRoute>
+            } />
+
           </Routes>
         </ToastProvider>
       </AuthProvider>

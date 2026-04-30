@@ -32,6 +32,11 @@ export default function Navbar() {
             <li><Link to="/events">Events</Link></li>
             <li style={{ color:'var(--text-muted)', fontSize:'.83rem' }}>{user.name}</li>
             <li>
+
+              {/* Add the Profile link here */}
+              <Link to="/profile" style={{ marginRight: '1rem', textDecoration: 'none', color: 'inherit' }}>
+              My Profile
+              </Link>
               <button className="btn btn-outline btn-sm" onClick={handleLogout}>
                 Logout
               </button>

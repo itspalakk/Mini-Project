@@ -1,5 +1,6 @@
 // src/pages/Clubs.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { api } from '../utils/api';
@@ -10,6 +11,7 @@ const CATS = ['Technology','Arts & Culture','Sports','Music','Science','Literatu
 export default function Clubs() {
   const { user }      = useAuth();
   const { showToast } = useToast();
+  const navigate      = useNavigate();
   const isStaff       = user?.role !== 'student';
 
   const [clubs,     setClubs]     = useState([]);
@@ -79,7 +81,7 @@ export default function Clubs() {
             {filtered.length === 0
               ? <div className="empty-state" style={{gridColumn:'1/-1'}}><div className="icon">🏛️</div><p>No clubs found</p></div>
               : filtered.map(c=>(
-                  <div key={c._id} className="glass-card" style={styles.card}>
+                  <div key={c._id} className="glass-card" style={{...styles.card, cursor:'pointer'}} onClick={() => navigate(`/clubs/${c._id}`)}>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'.8rem'}}>
                       <div style={styles.emojiBox}>{EMOJIS[c.category]||'🏛️'}</div>
                       <span className="badge badge-amber">{c.category}</span>
@@ -90,7 +92,7 @@ export default function Clubs() {
                       <span className="badge badge-blue">👥 {c.memberCount||0} members</span>
                       {isStaff
                         ? <span className="badge badge-green">Your Club</span>
-                        : <button className="btn btn-primary btn-sm" onClick={()=>registerClub(c._id,c.name)}>Register</button>
+                        : <button className="btn btn-primary btn-sm" onClick={(e)=>{e.stopPropagation(); registerClub(c._id,c.name)}}>Register</button>
                       }
                     </div>
                   </div>
