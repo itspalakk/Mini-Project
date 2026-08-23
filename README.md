@@ -131,11 +131,21 @@ React will open automatically at: **http://localhost:3000**
 | URL | Page | Access |
 |-----|------|--------|
 | `/` | Landing page | Public |
+<img width="1899" height="920" alt="Screenshot 2026-05-27 191229" src="https://github.com/user-attachments/assets/974f2da9-db97-4bfa-a3e4-a71153cb1241" />
 | `/login` | Login / Register | Public |
+<img width="1914" height="905" alt="Screenshot 2026-05-27 191320" src="https://github.com/user-attachments/assets/87ac8911-0910-475d-8682-152b6a2f5d8a" />
 | `/dashboard` | Student Dashboard | Student only |
+<img width="1868" height="902" alt="Screenshot 2026-05-27 191359" src="https://github.com/user-attachments/assets/245a5f28-0f03-48ce-a798-f7b65fe78863" />
 | `/staff` | Staff Dashboard | Admin / Coordinator only |
+<img width="1884" height="902" alt="Screenshot 2026-05-27 192327" src="https://github.com/user-attachments/assets/94c59aa4-9a3f-47eb-862b-6dad5d9f50fe" />
+<img width="1880" height="891" alt="Screenshot 2026-05-27 192347" src="https://github.com/user-attachments/assets/4657b2b9-7fd6-4d5d-96cb-426750237412" />
+<img width="1902" height="911" alt="Screenshot 2026-05-27 192444" src="https://github.com/user-attachments/assets/9cb95ad4-c049-4e49-86e7-711f66a371f5" />
+<img width="1888" height="903" alt="Screenshot 2026-05-27 192459" src="https://github.com/user-attachments/assets/b2a49c3e-06fd-4c79-9a8b-dfd25f4f1d0c" />
 | `/clubs` | Browse Clubs | All logged-in users |
+<img width="1884" height="925" alt="Screenshot 2026-05-27 191437" src="https://github.com/user-attachments/assets/c54873aa-1ddc-42b9-93a0-c32544b77a41" />
+<img width="1887" height="889" alt="Screenshot 2026-05-27 191500" src="https://github.com/user-attachments/assets/c8f2e5a6-e3f5-4d15-ad24-61b016b32689" />
 | `/events` | Browse Events | All logged-in users |
+<img width="1907" height="878" alt="Screenshot 2026-05-27 191605" src="https://github.com/user-attachments/assets/ccaf70ab-3cb4-4cc9-ac5b-9ccb358bbd12" />
 
 ---
 
@@ -226,5 +236,11 @@ React will open automatically at: **http://localhost:3000**
 4. Browser opens at `http://localhost:3000`
 
 ---
+## Team Members
 
+1. Palak Patel
+2. Pankhuri Chowbe
+3. Palak Sarathe
+
+---
 *EduEvent Manager — React Edition · Built for college communities*
