@@ -1,7 +1,7 @@
 // src/utils/api.js
 // Centralised API helper — all backend calls go through here
 
-const BASE = 'https://eduevent-backend.onrender.com/api';
+const BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 function getToken() {
   return localStorage.getItem('token');
