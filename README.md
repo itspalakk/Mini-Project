@@ -236,11 +236,6 @@ React will open automatically at: **http://localhost:3000**
 4. Browser opens at `http://localhost:3000`
 
 ---
-## Team Members
-
-1. Palak Patel
-2. Pankhuri Chowbe
-3. Palak Sarathe
 
 ---
 *EduEvent Manager — React Edition · Built for college communities*
