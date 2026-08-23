@@ -1,7 +1,7 @@
 // src/utils/api.js
 // Centralised API helper — all backend calls go through here
 
-const BASE = 'http://localhost:5000/api';
+const BASE = 'https://eduevent-backend.onrender.com/api';
 
 function getToken() {
   return localStorage.getItem('token');
@@ -65,6 +65,7 @@ export const api = {
 
   // Events
   getEvents:       ()        => request('GET',  '/events'),
+  getLiveEvents:   ()        => request('GET',  '/events/live/now'),
   createEvent:     (formData)=> uploadRequest('POST', '/events', formData),
   registerEvent:   (eventId) => request('POST', '/events/register', { eventId }),
   deleteEvent:     (id)      => request('DELETE', `/events/${id}`),
