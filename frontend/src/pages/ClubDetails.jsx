@@ -36,8 +36,9 @@ export default function ClubDetails() {
     loadData();
   }, [id]);
 
-  if (loading) return <div className="page-wrapper"><div style={{display:'flex',justifyContent:'center',padding:'5rem'}}><div className="spinner" /></div></div>;
-  if (!club) return <div className="page-wrapper"><div className="empty-state">Club not found</div></div>;
+  if (loading) return <div style={{display:'flex',justifyContent:'center',padding:'5rem'}}><div className="spinner" /></div>;
+  if (!club) return <div className="empty-state">Club not found</div>;
+
 
   // Staff data comes directly from the backend (fetched from DB via User.find)
   // No fragile merging needed — the backend returns all assigned admins & coordinators
@@ -46,20 +47,42 @@ export default function ClubDetails() {
   const coordinators = staff.filter(s => s.role === 'coordinator');
 
   return (
-    <div className="page-wrapper">
-      <div style={styles.wrap}>
-        <button className="btn btn-outline btn-sm" onClick={() => navigate(-1)} style={{ marginBottom: '1.5rem' }}>
-          ← Back
-        </button>
+    <div style={styles.wrap}>
+      <button className="btn btn-outline btn-sm" onClick={() => navigate(-1)} style={{ marginBottom: '1.5rem' }}>
+        ← Back
+      </button>
 
-        <div className="glass-card" style={styles.headerCard}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="glass-card" style={styles.headerCard}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div>
             <h1 className="section-title" style={{ marginBottom: '0.5rem' }}>{club.name}</h1>
-            <span className="badge badge-amber">{club.category}</span>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
+              <span className={`badge ${club.status === 'inactive' ? 'badge-red' : 'badge-green'}`}>
+                {club.status || 'active'}
+              </span>
+              <span className="badge badge-amber">{club.category}</span>
+              {club.createdAt && (
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: '0.5rem' }}>
+                  📅 Created {new Date(club.createdAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
           </div>
-          <p style={{ fontSize: '1.1rem', color: 'var(--text-light)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-            {club.description}
+          {club.logoUrl && (
+            <div style={{ fontSize: '2.5rem', marginRight: '0.5rem' }}>
+              {club.logoUrl}
+            </div>
+          )}
+        </div>
+        <p style={{ fontSize: '1.1rem', color: 'var(--text-light)', lineHeight: 1.6, marginBottom: '1rem' }}>
+          {club.description}
+        </p>
+        {club.coordinatorContact && (
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '0 0 1.5rem 0' }}>
+            📞 <strong>Coordinator Contact:</strong> {club.coordinatorContact}
           </p>
+        )}
+
           
           {/* ── Admin Details Section ── */}
           <div style={styles.staffSection}>
@@ -138,18 +161,18 @@ export default function ClubDetails() {
               ))}
             </div>
           )}
-        </div>
       </div>
     </div>
   );
 }
 
+
 /* ── Staff Card Component ─────────────────────────────────────────────────── */
 function StaffCard({ staff, variant }) {
   const isAdmin = variant === 'admin';
-  const accentColor = isAdmin ? 'rgba(240,165,0,0.9)' : 'rgba(59,130,246,0.9)';
-  const accentBg = isAdmin ? 'rgba(240,165,0,0.08)' : 'rgba(59,130,246,0.08)';
-  const accentBorder = isAdmin ? 'rgba(240,165,0,0.25)' : 'rgba(59,130,246,0.25)';
+  const accentColor = isAdmin ? '#2563eb' : '#0f766e';
+  const accentBg = isAdmin ? '#eff6ff' : '#ecfdf5';
+  const accentBorder = isAdmin ? '#bfdbfe' : '#99f6e4';
 
   // Generate initials for avatar
   const initials = (staff.name || '')
@@ -201,7 +224,7 @@ const styles = {
   wrap: { maxWidth: 900, margin: '0 auto', padding: '2.5rem 1.5rem' },
   headerCard: { padding: '2.2rem', marginBottom: '2.5rem' },
   staffSection: {
-    background: 'rgba(255,255,255,0.03)',
+    background: '#f8fafc',
     border: '1px solid var(--glass-border)',
     borderRadius: 12,
     padding: '1.4rem',
@@ -218,7 +241,7 @@ const styles = {
   staffCount: {
     fontSize: '0.75rem',
     color: 'var(--text-muted)',
-    background: 'rgba(255,255,255,0.06)',
+    background: '#eef2ff',
     padding: '0.2rem 0.6rem',
     borderRadius: 20,
   },
@@ -230,7 +253,7 @@ const styles = {
   emptyStaff: {
     textAlign: 'center',
     padding: '1.5rem',
-    background: 'rgba(255,255,255,0.02)',
+    background: '#f8fafc',
     borderRadius: 8,
   },
   eventsSection: { marginBottom: '3rem' },
@@ -241,7 +264,7 @@ const styles = {
 /* ── Staff Card Styles ────────────────────────────────────────────────────── */
 const staffStyles = {
   card: {
-    background: 'rgba(255,255,255,0.05)',
+    background: '#fff',
     padding: '1rem 1.1rem',
     borderRadius: 10,
     border: '1px solid',
@@ -296,3 +319,4 @@ const staffStyles = {
     whiteSpace: 'nowrap',
   },
 };
+

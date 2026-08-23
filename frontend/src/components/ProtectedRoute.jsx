@@ -12,6 +12,7 @@ export default function ProtectedRoute({ children, roles = [] }) {
   if (roles.length > 0 && !roles.includes(user.role)) {
     // Redirect to correct dashboard
     if (user.role === 'student') return <Navigate to="/dashboard" replace />;
+    if (user.role === 'club_manager') return <Navigate to="/club-manager" replace />;
     return <Navigate to="/staff" replace />;
   }
 

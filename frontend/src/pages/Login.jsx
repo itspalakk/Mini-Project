@@ -5,8 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { api } from '../utils/api';
 
-const ROLES = ['student','coordinator','admin'];
-const ROLE_LABELS = { student:'🎓 Student', coordinator:'🧑‍💼 Coordinator', admin:'⚙️ Admin' };
+const ROLES = ['student','coordinator','admin','club_manager'];
+const ROLE_LABELS = { student:'🎓 Student', coordinator:'🧑‍💼 Coordinator', admin:'⚙️ Admin', club_manager:'⚙️ Manager' };
 
 export default function Login() {
   const [tab,        setTab]        = useState('login');  // 'login' | 'register'
@@ -34,6 +34,7 @@ export default function Login() {
     student:     { id:'STU001',   pw:'student123',  role:'student' },
     admin:       { id:'ADMIN001', pw:'admin123',     role:'admin' },
     coordinator: { id:'COORD001', pw:'coord123',     role:'coordinator' },
+    club_manager:{ id:'MANAGER001',pw:'manager123',  role:'club_manager' },
   };
   function fillDemo(role) {
     const d = DEMOS[role];
@@ -54,11 +55,12 @@ export default function Login() {
       const data = await api.login({ identifier: loginId, password: loginPw, role: loginRole });
       login(data.user, data.token);
       showToast('Login successful!', 'success');
-      navigate(data.user.role === 'student' ? '/dashboard' : '/staff');
+      navigate(data.user.role === 'student' ? '/dashboard' : data.user.role === 'club_manager' ? '/club-manager' : '/staff');
     } catch (err) {
       setLoginErr(err.message || 'Login failed.');
     } finally { setLoading(false); }
   }
+
 
   // ── Register ───────────────────────────────────────────────────────────────
   async function handleRegister(e) {
@@ -74,6 +76,10 @@ export default function Login() {
     if (regRole === 'student') {
       if (!regData.enrollment) { setRegErr('Enrollment ID is required.'); return; }
       body.enrollment = regData.enrollment;
+    } else if (regRole === 'club_manager') {
+      // Club managers oversee all clubs — no club assignment required
+      if (!regData.loginId) { setRegErr('Staff Login ID is required.'); return; }
+      body.loginId = regData.loginId;
     } else {
       if (!regData.loginId) { setRegErr('Staff Login ID is required.'); return; }
       if (selClubs.length === 0) { setRegErr('Please select at least one club.'); return; }
@@ -211,7 +217,7 @@ export default function Login() {
                 <input type="password" value={regData.password} onChange={e=>setRegData({...regData,password:e.target.value})} placeholder="Min. 6 characters"/>
               </div>
 
-              {regRole !== 'student' && (
+              {regRole !== 'student' && regRole !== 'club_manager' && (
                 <div className="form-group">
                   <label>Assign Clubs</label>
                   <div style={styles.clubBox}>
@@ -240,13 +246,13 @@ export default function Login() {
 }
 
 const styles = {
-  container: { display:'flex', width:'100%', maxWidth:920, borderRadius:24, overflow:'hidden', background:'rgba(15,31,61,.75)', backdropFilter:'blur(20px)', border:'1px solid var(--glass-border)', boxShadow:'0 24px 64px rgba(0,0,0,.4)' },
-  left:    { flex:1, background:'linear-gradient(160deg,rgba(240,165,0,.14),rgba(224,95,44,.09))', padding:'3rem 2.5rem', display:'flex', flexDirection:'column', justifyContent:'space-between', borderRight:'1px solid var(--glass-border)' },
+  container: { display:'flex', width:'100%', maxWidth:920, borderRadius:8, overflow:'hidden', background:'#fff', border:'1px solid var(--glass-border)', boxShadow:'var(--shadow)' },
+  left:    { flex:1, background:'linear-gradient(160deg,#eef4ff,#ecfdf5)', padding:'3rem 2.5rem', display:'flex', flexDirection:'column', justifyContent:'space-between', borderRight:'1px solid var(--glass-border)' },
   brand:   { fontFamily:"'Playfair Display',serif", fontSize:'1.8rem', fontWeight:900 },
   tagline: { fontFamily:"'Playfair Display',serif", fontSize:'1.5rem', fontWeight:700, lineHeight:1.3, margin:'1.8rem 0 1rem' },
   featList:{ listStyle:'none', marginTop:'1.4rem' },
   featItem:{ display:'flex', alignItems:'center', gap:'.6rem', fontSize:'.83rem', color:'var(--text-muted)', marginBottom:'.6rem' },
-  tick:    { width:18, height:18, borderRadius:'50%', background:'rgba(240,165,0,.2)', color:'var(--accent)', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:'.65rem', fontWeight:700, flexShrink:0 },
+  tick:    { width:18, height:18, borderRadius:'50%', background:'rgba(37,99,235,.1)', color:'var(--accent)', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:'.65rem', fontWeight:700, flexShrink:0 },
   right:   { flex:1, padding:'2.5rem', overflowY:'auto', maxHeight:'90vh' },
   tabRow:  { display:'flex', background:'rgba(255,255,255,.05)', borderRadius:10, padding:4, marginBottom:'1.4rem' },
   tabBtn:  { flex:1, padding:'.5rem', border:'none', borderRadius:8, background:'transparent', color:'var(--text-muted)', fontFamily:"'DM Sans',sans-serif", fontSize:'.85rem', fontWeight:600, cursor:'pointer', transition:'all .2s' },
@@ -254,8 +260,9 @@ const styles = {
   roleLbl: { fontSize:'.75rem', color:'var(--text-muted)', marginBottom:'.5rem' },
   roleRow: { display:'flex', gap:'.4rem', marginBottom:'1.2rem', flexWrap:'wrap' },
   roleBtn: { flex:1, padding:'.45rem .4rem', border:'1.5px solid var(--glass-border)', borderRadius:10, background:'transparent', color:'var(--text-muted)', fontFamily:"'DM Sans',sans-serif", fontSize:'.78rem', fontWeight:600, cursor:'pointer', transition:'all .2s', whiteSpace:'nowrap' },
-  roleBtnActive: { borderColor:'var(--accent)', color:'var(--accent)', background:'rgba(240,165,0,.08)' },
+  roleBtnActive: { borderColor:'var(--accent)', color:'var(--accent)', background:'rgba(37,99,235,.08)' },
   demoBtn: { padding:'.4rem .8rem', borderRadius:8, border:'1px solid var(--glass-border)', background:'rgba(255,255,255,.04)', color:'var(--text-muted)', fontSize:'.73rem', cursor:'pointer', textAlign:'left', transition:'all .2s' },
   clubBox: { display:'flex', flexWrap:'wrap', gap:'.5rem', padding:'.6rem', background:'rgba(255,255,255,.04)', borderRadius:10, border:'1.5px solid var(--glass-border)', maxHeight:130, overflowY:'auto' },
   clubCheck: { display:'flex', alignItems:'center', gap:'.35rem', fontSize:'.78rem', color:'var(--text-muted)', cursor:'pointer' },
 };
+

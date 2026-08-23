@@ -54,12 +54,20 @@ async function seed() {
     role: 'coordinator', assignedClubs: [clubs[1]._id, clubs[2]._id],
   });
 
+  // Club Manager
+  const manager = await User.create({
+    name: 'Chief Manager', email: 'manager@demo.com',
+    loginId: 'MANAGER001', password: await hashPw('manager123'),
+    role: 'club_manager',
+  });
+
   // Update clubs with coordinator
   await Club.findByIdAndUpdate(clubs[0]._id, { coordinator: coord1._id });
   await Club.findByIdAndUpdate(clubs[1]._id, { coordinator: coord2._id });
   await Club.findByIdAndUpdate(clubs[2]._id, { coordinator: coord2._id });
   await Club.findByIdAndUpdate(clubs[4]._id, { coordinator: admin._id });
   await Club.findByIdAndUpdate(clubs[5]._id, { coordinator: coord1._id });
+
 
   // Students
   const students = await User.insertMany([
@@ -97,7 +105,9 @@ async function seed() {
   console.log('ADMIN        → Login ID:   ADMIN001 | Password: admin123   | Clubs: Code Crafters, Startup Studio');
   console.log('COORDINATOR1 → Login ID:   COORD001 | Password: coord123   | Clubs: Code Crafters, PixelPlay Gaming');
   console.log('COORDINATOR2 → Login ID:   COORD002 | Password: coord456   | Clubs: Canvas Collective, Rhythm Nation');
+  console.log('MANAGER      → Login ID:   MANAGER001 | Password: manager123');
   console.log('─────────────────────────────────────────\n');
+
 
   await mongoose.disconnect();
 }

@@ -1,5 +1,5 @@
 // routes/auth.js
-const { protect } = require('../middleware/auth');
+const { protect, roleGuard } = require('../middleware/auth');
 console.log("Protect middleware loaded:", protect);
 const express = require('express');
 const jwt     = require('jsonwebtoken');
@@ -32,6 +32,8 @@ if (!emailRegex.test(email)) {
 
     if (!role || role === 'student') {
       if (!enrollment) return res.status(400).json({ message: 'Enrollment ID is required for students' });
+    } else if (role === 'club_manager') {
+      if (!loginId) return res.status(400).json({ message: 'Login ID is required' });
     } else {
       if (!loginId) return res.status(400).json({ message: 'Login ID is required' });
       if (!assignedClubs || assignedClubs.length === 0)
@@ -47,53 +49,59 @@ if (!emailRegex.test(email)) {
     } else {
       const idExists = await User.findOne({ loginId: loginId.toUpperCase() });
       if (idExists) return res.status(409).json({ message: 'Login ID already taken' });
-      // Limit coordinators to 1 per club, admins to 2 per club
-    for (const clubId of assignedClubs) {
-  if (role === 'coordinator') {
-    const existing = await User.countDocuments({
-      role: 'coordinator',
-      assignedClubs: clubId
-    });
-    if (existing >= 1) {
-      const club = await Club.findById(clubId).select('name');
-      return res.status(409).json({
-        message: `Club "${club?.name || clubId}" already has a coordinator. Only 1 coordinator allowed per club.`
-      });
-    }
-  }
-  if (role === 'admin') {
-    const existing = await User.countDocuments({
-      role: 'admin',
-      assignedClubs: clubId
-    });
-    if (existing >= 2) {
-      const club = await Club.findById(clubId).select('name');
-      return res.status(409).json({
-        message: `Club "${club?.name || clubId}" already has 2 admins. Maximum 2 admins allowed per club.`
-      });
-    }
-  }
-}
+      
+      if (role !== 'club_manager') {
+        // Limit coordinators to 1 per club, admins to 2 per club
+        for (const clubId of assignedClubs) {
+          if (role === 'coordinator') {
+            const existing = await User.countDocuments({
+              role: 'coordinator',
+              assignedClubs: clubId
+            });
+            if (existing >= 1) {
+              const club = await Club.findById(clubId).select('name');
+              return res.status(409).json({
+                message: `Club "${club?.name || clubId}" already has a coordinator. Only 1 coordinator allowed per club.`
+              });
+            }
+          }
+          if (role === 'admin') {
+            const existing = await User.countDocuments({
+              role: 'admin',
+              assignedClubs: clubId
+            });
+            if (existing >= 2) {
+              const club = await Club.findById(clubId).select('name');
+              return res.status(409).json({
+                message: `Club "${club?.name || clubId}" already has 2 admins. Maximum 2 admins allowed per club.`
+              });
+            }
+          }
+        }
+      }
     }
 
-    
-const userData = { name, email, password, role: role || 'student' };
+    const userData = { name, email, password, role: role || 'student' };
 
-if (!role || role === 'student') {
-    userData.enrollment = enrollment.toUpperCase();
-} else {
-    userData.loginId = loginId.toUpperCase();
-    
-    // Ensure assignedClubs is always an array to prevent database crashes
-    userData.assignedClubs = Array.isArray(assignedClubs) 
-        ? assignedClubs.filter(id => id && id.length === 24) 
-        : [];
+    if (!role || role === 'student') {
+        userData.enrollment = enrollment.toUpperCase();
+    } else {
+        userData.loginId = loginId.toUpperCase();
+        
+        if (role !== 'club_manager') {
+          // Ensure assignedClubs is always an array to prevent database crashes
+          userData.assignedClubs = Array.isArray(assignedClubs) 
+              ? assignedClubs.filter(id => id && id.length === 24) 
+              : [];
 
-    // Safety: Don't allow saving if a coordinator has 0 clubs
-    if (role === 'coordinator' && userData.assignedClubs.length === 0) {
-        return res.status(400).json({ message: 'Please select at least one club' });
+          // Safety: Don't allow saving if a coordinator has 0 clubs
+          if (role === 'coordinator' && userData.assignedClubs.length === 0) {
+              return res.status(400).json({ message: 'Please select at least one club' });
+          }
+        } else {
+          userData.assignedClubs = [];
+        }
     }
-}
 
     const user = await User.create(userData);
 
@@ -112,6 +120,31 @@ if (!role || role === 'student') {
     res.status(500).json({ message: 'Server error during registration' });
   }
 });
+
+// GET coordinators — club manager only
+router.get('/coordinators', protect, roleGuard('club_manager'), async (req, res) => {
+  try {
+    const coords = await User.find({ role: 'coordinator' })
+      .select('name email loginId assignedClubs')
+      .populate('assignedClubs', 'name');
+    res.json(coords);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching coordinators' });
+  }
+});
+
+// GET admins — club manager only
+router.get('/admins', protect, roleGuard('club_manager'), async (req, res) => {
+  try {
+    const admins = await User.find({ role: 'admin' })
+      .select('name email loginId assignedClubs')
+      .populate('assignedClubs', 'name');
+    res.json(admins);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching admins' });
+  }
+});
+
 
 // LOGIN
 router.post('/login', async (req, res) => {

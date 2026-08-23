@@ -24,9 +24,10 @@ export default function Navbar() {
         {user ? (
           <>
             <li>
-              <Link to={user.role === 'student' ? '/dashboard' : '/staff'}>
+              <Link to={user.role === 'student' ? '/dashboard' : user.role === 'club_manager' ? '/club-manager' : '/staff'}>
                 Dashboard
               </Link>
+
             </li>
             <li><Link to="/clubs">Clubs</Link></li>
             <li><Link to="/events">Events</Link></li>

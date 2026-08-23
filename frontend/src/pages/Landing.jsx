@@ -86,13 +86,14 @@ export default function Landing() {
 
 const styles = {
   hero:     { minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center',padding:'6rem 1.5rem 4rem' },
-  eyebrow:  { display:'inline-flex',alignItems:'center',gap:'.5rem',background:'rgba(240,165,0,.12)',border:'1px solid rgba(240,165,0,.3)',color:'var(--accent)',padding:'.35rem 1rem',borderRadius:'50px',fontSize:'.76rem',fontWeight:600,letterSpacing:'.1em',textTransform:'uppercase',marginBottom:'1.8rem' },
+  eyebrow:  { display:'inline-flex',alignItems:'center',gap:'.5rem',background:'rgba(37,99,235,.08)',border:'1px solid rgba(37,99,235,.22)',color:'var(--accent)',padding:'.35rem 1rem',borderRadius:'50px',fontSize:'.76rem',fontWeight:600,letterSpacing:'.1em',textTransform:'uppercase',marginBottom:'1.8rem' },
   h1:       { fontFamily:"'Playfair Display',serif",fontSize:'clamp(2.8rem,6vw,4.8rem)',fontWeight:900,lineHeight:1.1,marginBottom:'1.4rem',maxWidth:800 },
   desc:     { fontSize:'1rem',color:'var(--text-muted)',maxWidth:560,lineHeight:1.7,marginBottom:'2.5rem' },
   cta:      { display:'flex',gap:'1rem',flexWrap:'wrap',justifyContent:'center' },
   statsRow: { display:'flex',gap:'1.5rem',marginTop:'4rem',flexWrap:'wrap',justifyContent:'center' },
   statPill: { display:'flex',alignItems:'center',gap:'.5rem',padding:'.55rem 1.2rem',borderRadius:'50px' },
   featGrid: { display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'1.4rem' },
-  featIcon: { width:48,height:48,borderRadius:12,background:'rgba(240,165,0,.12)',border:'1px solid rgba(240,165,0,.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.4rem',marginBottom:'1.1rem' },
+  featIcon: { width:48,height:48,borderRadius:12,background:'rgba(37,99,235,.08)',border:'1px solid rgba(37,99,235,.18)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.4rem',marginBottom:'1.1rem' },
   rolesRow: { display:'flex',gap:'1.5rem',justifyContent:'center',flexWrap:'wrap' },
 };
+

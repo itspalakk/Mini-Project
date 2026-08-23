@@ -3,15 +3,18 @@
 
 require('dotenv').config();
 const express  = require('express');
+const path = require("path");
 const mongoose = require('mongoose');
 const cors     = require('cors');
+const { startReminderScheduler } = require('./jobs/reminderScheduler');
 
 const app = express();
 
 // ── Middleware ──────────────────────────────────
 app.use(cors({ origin: '*' }));           // Allow all origins for local dev
-app.use(express.json());                  // Parse JSON request bodies
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' })); 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));                 // Parse JSON request bodies
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // ── Routes ──────────────────────────────────────
 app.use('/api/auth',          require('./routes/auth'));
@@ -19,6 +22,8 @@ app.use('/api/clubs',         require('./routes/clubs'));
 app.use('/api/events',        require('./routes/events'));
 app.use('/api/interests',     require('./routes/interests'));
 app.use('/api/registrations', require('./routes/registrations'));
+app.use('/api/manager',       require('./routes/manager'));
+
 
 // ── Health check ────────────────────────────────
 app.get('/', (req, res) => {
@@ -47,6 +52,9 @@ mongoose
     app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
     });
+
+    // Start the pre-event reminder scheduler (24h + 2h emails) after DB is up
+    startReminderScheduler();
   })
   .catch(err => {
     console.error('❌ MongoDB connection failed:', err.message);

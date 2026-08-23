@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   // loginId used by admin/coordinator (unique staff ID)
   loginId:    { type: String, sparse: true, unique: true, uppercase: true },
   password:      { type: String, required: true, minlength: 6 },
-  role:          { type: String, enum: ['student', 'coordinator', 'admin'], default: 'student' },
+  role:          { type: String, enum: ['student', 'coordinator', 'admin', 'club_manager'], default: 'student' },
   interests:     [{ type: String }],
   // clubs this admin/coordinator is assigned to
   assignedClubs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Club' }],
