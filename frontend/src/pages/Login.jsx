@@ -5,6 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { api } from '../utils/api';
 
+const sendGAEvent = (eventName, params = {}) => {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: eventName,
+    ...params
+  });
+};
+
 const ROLES = ['student','coordinator','admin','club_manager'];
 const ROLE_LABELS = { student:'🎓 Student', coordinator:'🧑‍💼 Coordinator', admin:'⚙️ Admin', club_manager:'⚙️ Manager' };
 
@@ -53,8 +61,16 @@ export default function Login() {
     setLoading(true);
     try {
       const data = await api.login({ identifier: loginId, password: loginPw, role: loginRole });
-      login(data.user, data.token);
-      showToast('Login successful!', 'success');
+
+login(data.user, data.token);
+
+// Send login event to Google Tag Manager
+sendGAEvent('login', {
+  user_role: data.user.role
+});
+
+showToast('Login successful!', 'success');
+
       navigate(data.user.role === 'student' ? '/dashboard' : data.user.role === 'club_manager' ? '/club-manager' : '/staff');
     } catch (err) {
       setLoginErr(err.message || 'Login failed.');
