@@ -105,6 +105,10 @@ showToast('Login successful!', 'success');
     setLoading(true);
     try {
       await api.register(body);
+
+      // Track successful registration in Google Tag Manager
+       sendGAEvent('sign_up');
+       
       showToast('Account created! Please login.', 'success');
       setTab('login');
     } catch (err) { setRegErr(err.message || 'Registration failed.'); }
